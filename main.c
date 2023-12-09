@@ -4,6 +4,7 @@
 
 uint8_t swapNoLoop(uint8_t a);
 uint8_t swapLoop(uint8_t a);
+uint8_t parityOfOnes(uint8_t a);
 
 int main()
 {
@@ -14,7 +15,48 @@ int main()
 
     return 0;
 }
+uint8_t parityOfOnes(uint8_t a)
+{
+    uint8_t ret = 0;
+    uint8_t hood = 0x01;
 
+    _asm
+    {
+        xor eax,eax
+        xor ebx,ebx
+
+        mov bl, hood
+        STARTLOOP:
+        mov al , a // robocza przestrzen 
+        and al , bl
+
+        cmp al , bl
+        jnz NieMaJeden
+        add bh , 1
+        NieMaJeden:
+
+        cmp bl , 0x80//0x80 to zbieznik 
+        jz ENDLOOP
+        shl bl , 1
+        jmp STARTLOOP
+        ENDLOOP:
+        
+        mov ah , 0x01
+        and ah , bh
+
+        cmp ah , 0x00
+        jz PARZYSTA
+        NIEPARZYSTA:
+        mov ret , 0
+        jmp ENDFUNCTION
+        PARZYSTA:
+        mov ret , 1
+        ENDFUNCTION:
+
+    }
+    return ret;
+
+}
 
 uint8_t swapLoop(uint8_t a)
 {
