@@ -5,6 +5,8 @@
 uint8_t swapNoLoop(uint8_t a);
 uint8_t swapLoop(uint8_t a);
 uint8_t parityOfOnes(uint8_t a);
+uint8_t countOfZero(uint8_t a);
+uint8_t countOfOne(uint8_t a);
 
 int main()
 {
@@ -15,6 +17,75 @@ int main()
 
     return 0;
 }
+
+uint8_t countOfOne(uint8_t a)
+{
+    uint8_t ret = 0;
+    uint8_t hood = 0x01;
+
+    _asm
+    {
+        xor eax, eax
+        xor ebx, ebx
+
+        mov bl, hood
+        mov bh , 0x08
+        STARTLOOP :
+        mov al, a // robocza przestrzen 
+            and al, bl
+
+            cmp al, bl
+            jz JestJeden
+            sub bh , 1
+            JestJeden:
+
+        cmp bl, 0x80//0x80 to zbieznik 
+            jz ENDLOOP
+            shl bl, 1
+            jmp STARTLOOP
+            ENDLOOP :
+
+        mov ret , bh
+    }
+    return ret;
+
+}
+
+uint8_t countOfZero(uint8_t a)
+{
+    uint8_t ret = 0;
+    uint8_t hood = 0x01;
+
+    _asm
+    {
+        xor eax, eax
+        xor ebx, ebx
+        mov ah, 0x08
+        mov bl, hood
+        
+        
+        STARTLOOP:
+            mov al, a 
+            and al, bl
+            cmp al, bl
+            jz JestJeden
+            sub ah , 1
+            JestJeden:
+
+            cmp bl, 0x80//0x80 to zbieznik 
+            jz ENDLOOP
+            shl bl, 1
+            jmp STARTLOOP
+            ENDLOOP :
+
+        mov bh , 0x08
+        sub bh ,  ah
+        mov ret , bh
+    }
+    return ret;
+
+}
+
 uint8_t parityOfOnes(uint8_t a)
 {
     uint8_t ret = 0;
