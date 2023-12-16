@@ -7,6 +7,7 @@ uint8_t swapLoop(uint8_t a);
 uint8_t parityOfOnes(uint8_t a);
 uint8_t countOfZero(uint8_t a);
 uint8_t countOfOne(uint8_t a);
+uint16_t multiply(uint8_t a, uint8_t b);
 
 int main()
 {
@@ -17,6 +18,33 @@ int main()
 
     return 0;
 }
+
+uint16_t multiply(uint8_t a, uint8_t b)
+{
+    uint16_t result = 0x00;
+    uint8_t  con = 0x01;
+    
+    _asm
+    {
+        xor eax, eax
+        xor ebx, ebx
+        xor ecx , ecx
+        mov al , a 
+        mov bl , b
+        START:
+        test bl , 0x01
+        jz shift
+        add cx, ax
+        shift:
+
+        shl ax , 1
+        shr bl, 1
+            jnz START
+        mov result , cx  
+    }
+    return result;
+}
+
 
 uint8_t countOfOne(uint8_t a)
 {
